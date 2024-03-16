@@ -1,13 +1,32 @@
 const express = require('express');
 const path = require('path');
 const multer = require('multer');
+const dotenv = require('dotenv');
+const cors = require('cors');
 const signupRouter = require('./routes/signup');
 const loginRouter = require('./routes/login');
 const profileRouter = require('./routes/profile');
 const fileRouter = require('./routes/file');
 
+dotenv.config();
+
 const app = express();
-const Port = 3000;
+const Port = process.env.PORT;
+
+const corsOptions = {
+  origin: 'http://localhost:2717',
+  methods: 'GET, PUT, PATCH POST, DELETE',
+  credentials: true,
+  OptionSuccessStaus: 204,
+};
+
+app.set('view engine', 'ejs');
+app.set('views', path.resolve('./views'));
+
+// middleware
+app.use(cors(corsOptions));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
@@ -19,12 +38,6 @@ const Port = 3000;
 // });
 
 // const upload = multer({ storage });
-
-app.set('view engine', 'ejs');
-app.set('views', path.resolve('./views'));
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 app.get('/', (req, res) => {
   try {

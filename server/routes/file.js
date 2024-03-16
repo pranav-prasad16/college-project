@@ -1,8 +1,11 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 // const { fileUploadHandler } = require('../controllers/fileUpload');
+
+router.use(authMiddleware);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
