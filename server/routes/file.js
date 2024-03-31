@@ -9,16 +9,38 @@ router.use(authMiddleware);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    return cb(null, './uploads');
+    cb(null, './uploads');
   },
   filename: function (req, file, cb) {
-    return cb(null, `${Date.now()}-${file.originalname}`);
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 1024 * 1024 * 10 }, //limiting file size to 10 MB
+  fileFilter: function (req, file, cb) {
+    const allowedExtensions = [
+      '.c',
+      '.java',
+      '.js',
+      '.py',
+      '.pdf',
+      '.txt',
+      '.m',
+    ];
+    const fileExtension = path.extname(file.originalname).toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+      cb(new Error('Invalid file type')); // reject file with invalid extension
+    }
+    cb(null, true); // accepts file with valid extension
+  },
+});
 
-router.post('/', upload.single('profileImage'), (req, res) => {
+router.post('/upload', upload.single('fileUpload'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ msg: 'No file uploaded' });
+  }
   try {
     console.log(req.body);
     console.log(req.file);
@@ -27,6 +49,17 @@ router.post('/', upload.single('profileImage'), (req, res) => {
   } catch (error) {
     console.log('Error : ', error);
     return res.status(500).json({ msg: 'Internal Server Error' });
+  }
+});
+
+//Error handling middleware
+router.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    console.log('Multer error : ', err);
+    return res.status(400).json({ msg: 'File upload error' });
+  } else if (err) {
+    console.log('Unknown error : ', err);
+    return res.status(500).json({ msg: 'Internal server error' });
   }
 });
 

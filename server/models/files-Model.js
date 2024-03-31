@@ -10,15 +10,15 @@ const fileSchmea = new mongoose.Schema({
     required: true,
   },
   fileSize: {
-    type: String,
+    type: Number,
     required: true,
   },
   fileContent: {
-    type: String,
+    type: Buffer,
     required: true,
   },
   uploadedAt: {
-    type: String,
+    type: Date,
     default: Date.now,
   },
   instructions: {
@@ -26,6 +26,6 @@ const fileSchmea = new mongoose.Schema({
   },
 });
 
-const File = mongoose.model('file', fileSchmea);
+const File = mongoose.model('File', fileSchmea);
 
 module.exports = File;

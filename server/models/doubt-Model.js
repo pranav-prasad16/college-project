@@ -18,6 +18,6 @@ const doubtSchema = new mongoose.Schema({
   },
 });
 
-const Doubt = mongoose.model('doubt', doubtSchema);
+const Doubt = mongoose.model('Doubt', doubtSchema);
 
 module.exports = Doubt;

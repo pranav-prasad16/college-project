@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const signupRouter = require('./routes/signup');
 const loginRouter = require('./routes/login');
-const profileRouter = require('./routes/profile');
+// const profileRouter = require('./routes/profile');
 const fileRouter = require('./routes/file');
 
 dotenv.config();
@@ -14,7 +14,7 @@ const app = express();
 const Port = process.env.PORT;
 
 const corsOptions = {
-  origin: 'http://localhost:2717',
+  origin: 'http://localhost:3000',
   methods: 'GET, PUT, PATCH POST, DELETE',
   credentials: true,
   OptionSuccessStaus: 204,
@@ -52,7 +52,7 @@ app.use('/api/signup', signupRouter);
 
 app.use('/api/login', loginRouter);
 
-app.use('/api/profile', profileRouter);
+// app.use('/api/profile', profileRouter);
 
 app.use('/api/file', fileRouter);
 
