@@ -17,6 +17,10 @@ const fileSchmea = new mongoose.Schema({
     type: Buffer,
     required: true,
   },
+  ownerId: {
+    type: String,
+    required: true,
+  },
   uploadedAt: {
     type: Date,
     default: Date.now,
