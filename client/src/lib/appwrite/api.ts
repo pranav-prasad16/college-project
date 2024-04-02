@@ -1,4 +1,5 @@
 import { ID, Query } from "appwrite";
+import axios from "axios";
 
 import { appwriteConfig, account, databases, storage, avatars } from "./config";
 import { IUpdatePost, INewPost, INewUser, IUpdateUser } from "@/types";
@@ -10,24 +11,43 @@ import { IUpdatePost, INewPost, INewUser, IUpdateUser } from "@/types";
 // ============================== SIGN UP
 export async function createUserAccount(user: INewUser) {
   try {
-    const newAccount = await account.create(
-      ID.unique(),
-      user.email,
-      user.password,
-      user.name
-    );
+    // const newAccount = await account.create(
+    //   user.email,
+    //   user.password,
+    //   user.name
+    // );
 
-    if (!newAccount) throw Error;
+    // if (!newAccount) throw Error;
+    const newAccount = {
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      userName: user.username,
+    };
+
+    const response = await axios.post(
+      "http://localhost:3000/api/signup",
+      newAccount
+    );
+    const json = response.data;
 
     const avatarUrl = avatars.getInitials(user.name);
 
-    const newUser = await saveUserToDB({
-      accountId: newAccount.$id,
-      name: newAccount.name,
-      email: newAccount.email,
-      username: user.username,
+    const newUser = {
+      accountId: json._id,
+      name: json.name,
+      email: json.email,
+      userName: json.userName,
+      password: json.password,
       imageUrl: avatarUrl,
-    });
+    };
+    // const newUser = await saveUserToDB({
+    //   accountId: newAccount.$id,
+    //   name: newAccount.name,
+    //   email: newAccount.email,
+    //   username: user.username,
+    //   imageUrl: avatarUrl,
+    // });
 
     return newUser;
   } catch (error) {
