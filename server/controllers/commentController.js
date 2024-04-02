@@ -3,31 +3,28 @@ const Comment = require('../models/comments-Model');
 const getComment = async (req, res) => {
   const { postId } = req.params;
   try {
-    const comment = await Comment.find();
-    if (!comment) {
+    const comments = await Comment.find({ postId });
+    if (!comments) {
       return res.status(404).json({ msg: 'No Comments found' });
     }
-    return res.status(200).json({ comment });
+    return res.status(200).json(comments);
   } catch (error) {
     console.log('Error', error);
-    return res.status(500).json({ msg: 'Internal Server Error' });
+    return res.status(500).json({ msg: 'Failed to fetch comments' });
   }
 };
 
 const postComment = async (req, res) => {
   const { postId } = req.params;
-  const commentData = req.body;
-  const existingComment = await Comment.findOne({ title: commentData.title });
-
-  if (existingComment) {
-    return res.status(400).json({ msg: 'Already present' });
-  }
+  const { body, userId } = req.body;
+  const createdAt = Date.now();
   try {
-    const newComment = await Comment.create(commentData);
+    const newComment = new Comment({ body, userId, postId, createdAt });
+    await newComment.save();
     return res.status(201).json(newComment);
   } catch (error) {
     console.log('Error', error);
-    return res.status(500).json({ msg: 'Internal Server Error' });
+    return res.status(500).json({ msg: 'Failed to add comment' });
   }
 };
 
@@ -48,7 +45,7 @@ const patchComment = async (req, res) => {
     return res.status(201).json({ msg: 'Comment patched successfully' });
   } catch (error) {
     console.log('Error', error);
-    return res.status(500).json({ msg: 'Internal Server Error' });
+    return res.status(500).json({ msg: 'Failed to update comment' });
   }
 };
 
@@ -62,7 +59,7 @@ const deleteComment = async (req, res) => {
     return res.status(201).json({ msg: 'Deleted comment successfully' });
   } catch (error) {
     console.log('Error', error);
-    return res.status(500).json({ msg: 'Internal Server Error' });
+    return res.status(500).json({ msg: 'Failed to delete comment' });
   }
 };
 
